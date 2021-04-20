@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.8.0;
 
 
 /**
@@ -1214,9 +1214,9 @@ interface IBEP721Receiver {
  // * is concerned).
  // *
  // * This contract is only required for intermediate, library-like contracts.
- 
+
 abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
+    function _msgSender() internal view virtual returns (address) {
         return msg.sender;
     }
 
@@ -1767,13 +1767,11 @@ contract BNFT is BEP721 {
     }
 
     modifier onlyOwner() {
-    if (msg.sender == owner) _;
+        require(msg.sender == owner, "BNFT: not owner");
+        _;
     }
 
-    function mintNFT(address recipient, string memory tokenURI)
-    public onlyOwner
-    returns (uint256)
-    {
+    function mintNFT(address recipient, string memory tokenURI) public onlyOwner returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _mint(recipient, newItemId);
@@ -1781,5 +1779,4 @@ contract BNFT is BEP721 {
 
         return newItemId;
     }
-
 }
