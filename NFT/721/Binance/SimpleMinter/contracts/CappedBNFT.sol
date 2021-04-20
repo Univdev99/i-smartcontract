@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.8.0;
 
 
 /**
@@ -1214,9 +1214,9 @@ interface IBEP721Receiver {
  // * is concerned).
  // *
  // * This contract is only required for intermediate, library-like contracts.
- 
+
 abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
+    function _msgSender() internal view virtual returns (address) {
         return msg.sender;
     }
 
@@ -1757,29 +1757,30 @@ library Counters {
     }
 }
 
-contract BNFT is BEP721 {
+contract CappedBNFT is BEP721 {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public owner;
+    uint256 private _cap;
 
-    constructor(string memory name_, string memory symbol_) public BEP721(name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, uint256 cap_) public BEP721(name_, symbol_) {
+        require(cap_ > 0, "CappedBNFT: cap is 0");
         owner = msg.sender;
+        _cap = cap_;
     }
 
     modifier onlyOwner() {
-    if (msg.sender == owner) _;
+        require(msg.sender == owner, "CappedBNFT: not owner");
+        _;
     }
 
-    function mintNFT(address recipient, string memory tokenURI)
-    public onlyOwner
-    returns (uint256)
-    {
+    function mintNFT(address recipient, string memory tokenURI) public onlyOwner returns (uint256) {
         _tokenIds.increment();
+        require(_tokenIds.current() <= _cap, "CappedBNFT: cap overflow");
         uint256 newItemId = _tokenIds.current();
         _mint(recipient, newItemId);
         _setTokenURI(newItemId, tokenURI);
 
         return newItemId;
     }
-
 }
