@@ -7,11 +7,17 @@ import "../../721/Ethereum/CappedMinter/CappedERCNFT.sol";
 contract EarlyAdopter is CappedERCNFT, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
-    constructor(string memory name_, string memory symbol_) public CappedERCNFT(name_, symbol_, 4000) {
+    constructor(string memory name_, string memory symbol_, uint256 cap_) public CappedERCNFT(name_, symbol_, cap_) {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(OPERATOR_ROLE, msg.sender);
     }
 
+    /**
+     * @dev Override supportInterface .
+     */
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
 
     /**
      * @dev Restricted to members of the admin role.
@@ -54,10 +60,6 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
         _setTokenURI(tokenId, tokenURI);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
-        return super.supportsInterface(interfaceId);
-    }
-
     /**
      * @dev Transfer ownership to a new address. Restricted to admin
      * @param newOwner address
@@ -69,4 +71,16 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
         _setupRole(OPERATOR_ROLE, newOwner);
         owner = newOwner;
     }
+
+    /**
+     * @dev ERC721 _transfer() disabled
+     * @param from address
+     * @param to address
+     * @param tokenId uint256
+     */
+    function _transfer(address from, address to, uint256 tokenId) internal override {
+        require(false, "EarlyAdopter: token transfer disabled");
+        super._transfer(from, to, tokenId);
+    }
+
 }
