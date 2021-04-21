@@ -54,6 +54,10 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
         _setTokenURI(tokenId, tokenURI);
     }
 
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
     /**
      * @dev Transfer ownership to a new address. Restricted to admin
      * @param newOwner address
