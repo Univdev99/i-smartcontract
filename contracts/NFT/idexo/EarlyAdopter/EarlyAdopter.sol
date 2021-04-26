@@ -52,24 +52,33 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
     }
 
     /**
+     * @dev Check if an account is operator.
+     * @param account address
+     */
+    function checkOperator(address account) public view returns (bool) {
+        return hasRole(OPERATOR_ROLE, account);
+    }
+
+    /**
      * @dev Set a token URI.
      * @param tokenId uint256
      * @param tokenURI string
      */
-    function setTokenURI(uint256 tokenId, string memory tokenURI) public onlyOperator {
-        _setTokenURI(tokenId, tokenURI);
+    function setTokenURI(uint256 tokenId, string memory tokenURI) public override onlyOperator {
+        super.setTokenURI(tokenId, tokenURI);
     }
 
     /**
      * @dev Transfer ownership to a new address. Restricted to admin
      * @param newOwner address
      */
-    function transferOwnership(address newOwner) public onlyAdmin {
-        renounceRole(DEFAULT_ADMIN_ROLE, owner);
-        renounceRole(OPERATOR_ROLE, owner);
+    function transferOwnership(address newOwner) public override onlyAdmin {
+        renounceRole(DEFAULT_ADMIN_ROLE, owner());
         _setupRole(DEFAULT_ADMIN_ROLE, newOwner);
-        _setupRole(OPERATOR_ROLE, newOwner);
-        owner = newOwner;
+        if (!hasRole(OPERATOR_ROLE, newOwner)) {
+            _setupRole(OPERATOR_ROLE, newOwner);
+        }
+        super.transferOwnership(newOwner);
     }
 
     /**
@@ -83,4 +92,12 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
         super._transfer(from, to, tokenId);
     }
 
+    /**
+     * @dev CappedERCNFT mintNFT() override
+     * @param recipient address
+     * @param tokenURI string
+     */
+    function mintNFT(address recipient, string memory tokenURI) public override onlyOperator returns (uint256) {
+        return super.mintNFT(recipient, tokenURI);
+    }
 }
