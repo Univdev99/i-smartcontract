@@ -74,9 +74,10 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
      */
     function transferOwnership(address newOwner) public override onlyAdmin {
         renounceRole(DEFAULT_ADMIN_ROLE, owner());
-        renounceRole(OPERATOR_ROLE, owner());
         _setupRole(DEFAULT_ADMIN_ROLE, newOwner);
-        _setupRole(OPERATOR_ROLE, newOwner);
+        if (!hasRole(OPERATOR_ROLE, newOwner)) {
+            _setupRole(OPERATOR_ROLE, newOwner);
+        }
         super.transferOwnership(newOwner);
     }
 
@@ -91,4 +92,12 @@ contract EarlyAdopter is CappedERCNFT, AccessControl {
         super._transfer(from, to, tokenId);
     }
 
+    /**
+     * @dev CappedERCNFT mintNFT() override
+     * @param recipient address
+     * @param tokenURI string
+     */
+    function mintNFT(address recipient, string memory tokenURI) public override onlyOperator returns (uint256) {
+        return super.mintNFT(recipient, tokenURI);
+    }
 }

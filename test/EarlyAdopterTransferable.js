@@ -41,10 +41,17 @@ contract('EarlyAdopterTransferable', async accounts => {
   });
 
   describe('NFT', async () => {
-    it('NFT: should be able to mint a new token', async () => {
-      await adopter.mintNFT(alice, 'alice-token-1');
+    it('NFT: should be able to mint a new token by operator', async () => {
+      await adopter.addOperator(bob);
+      await adopter.mintNFT(alice, 'alice-token-1', {from: bob});
       assert.equal(await adopter.ownerOf(1), alice);
       assert.equal(await adopter.getTokenURI(1), 'alice-token-1');
+    });
+    it('NFT: should not be able to mint a new token by non-operator', async () => {
+      await truffleAssert.reverts(
+        adopter.mintNFT(alice, 'alice-token-1', {from: bob}),
+        'revert EarlyAdopterTransferable: not operator'
+      );
     });
     it('NFT: should be able to set token uri by operator', async () => {
       await adopter.mintNFT(alice, 'alice-token-1');

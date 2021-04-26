@@ -27,7 +27,7 @@ contract CappedERCNFT is ERC721, Ownable {
         return _tokenURIs[tokenId];
     }
 
-    function mintNFT(address recipient, string memory tokenURI) public onlyOwner returns (uint256) {
+    function mintNFT(address recipient, string memory tokenURI) public virtual returns (uint256) {
         _tokenIds.increment();
         require(_tokenIds.current() <= _cap, "CappedERCNFT: cap overflow");
         uint256 newItemId = _tokenIds.current();

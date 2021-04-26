@@ -23,7 +23,7 @@ contract ERCNFT is ERC721, Ownable {
         return _tokenURIs[tokenId];
     }
 
-    function mintNFT(address recipient, string memory tokenURI) public virtual onlyOwner returns (uint256) {
+    function mintNFT(address recipient, string memory tokenURI) public virtual returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         _safeMint(recipient, newItemId);

@@ -258,7 +258,7 @@ contract PEarlyAdopterTransferable is CappedPNFT, AccessControl {
      * @dev Restricted to members of the admin role.
      */
     modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "EarlyAdopter: not admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "PEarlyAdopterTransferable: not admin");
         _;
     }
 
@@ -266,7 +266,7 @@ contract PEarlyAdopterTransferable is CappedPNFT, AccessControl {
      * @dev Restricted to members of the operator role.
      */
     modifier onlyOperator() {
-        require(hasRole(OPERATOR_ROLE, msg.sender), "EarlyAdopter: not operator");
+        require(hasRole(OPERATOR_ROLE, msg.sender), "PEarlyAdopterTransferable: not operator");
         _;
     }
 
@@ -287,6 +287,14 @@ contract PEarlyAdopterTransferable is CappedPNFT, AccessControl {
     }
 
     /**
+     * @dev Check if an account is operator.
+     * @param account address
+     */
+    function checkOperator(address account) public view returns (bool) {
+        return hasRole(OPERATOR_ROLE, account);
+    }
+
+    /**
      * @dev Set a token URI.
      * @param tokenId uint256
      * @param tokenURI string
@@ -299,12 +307,13 @@ contract PEarlyAdopterTransferable is CappedPNFT, AccessControl {
      * @dev Transfer ownership to a new address. Restricted to admin
      * @param newOwner address
      */
-    function transferOwnership(address newOwner) public onlyAdmin {
-        renounceRole(DEFAULT_ADMIN_ROLE, owner);
-        renounceRole(OPERATOR_ROLE, owner);
+    function transferOwnership(address newOwner) public override onlyAdmin {
+        renounceRole(DEFAULT_ADMIN_ROLE, owner());
         _setupRole(DEFAULT_ADMIN_ROLE, newOwner);
-        _setupRole(OPERATOR_ROLE, newOwner);
-        owner = newOwner;
+        if (!hasRole(OPERATOR_ROLE, newOwner)) {
+            _setupRole(OPERATOR_ROLE, newOwner);
+        }
+        super.transferOwnership(newOwner);
     }
 
     /**
@@ -315,8 +324,16 @@ contract PEarlyAdopterTransferable is CappedPNFT, AccessControl {
      * @param tokenId uint256
      */
     function _transfer(address from, address to, uint256 tokenId) internal override onlyOperator {
-        require(false, "EarlyAdopter: token transfer disabled");
+        require(false, "PEarlyAdopterTransferable: token transfer disabled");
         super._transfer(from, to, tokenId);
     }
 
+    /**
+     * @dev CappedPNFT mintNFT() override
+     * @param recipient address
+     * @param tokenURI string
+     */
+    function mintNFT(address recipient, string memory tokenURI) public override onlyOperator returns (uint256) {
+        return super.mintNFT(recipient, tokenURI);
+    }
 }
