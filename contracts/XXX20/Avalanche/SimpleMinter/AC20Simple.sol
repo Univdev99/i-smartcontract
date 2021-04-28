@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract ERC20Simple is ERC20, Ownable, AccessControl {
+contract AC20Simple is ERC20, Ownable, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
     constructor(string memory name_, string memory symbol_) public ERC20(name_, symbol_) {
@@ -17,7 +17,7 @@ contract ERC20Simple is ERC20, Ownable, AccessControl {
      * @dev Restricted to members of the admin role.
      */
     modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "ERC20Simple: not admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "AC20Simple: not admin");
         _;
     }
 
@@ -25,7 +25,7 @@ contract ERC20Simple is ERC20, Ownable, AccessControl {
      * @dev Restricted to members of the operator role.
      */
     modifier onlyOperator() {
-        require(hasRole(OPERATOR_ROLE, msg.sender), "ERC20Simple: not operator");
+        require(hasRole(OPERATOR_ROLE, msg.sender), "AC20Simple: not operator");
         _;
     }
 

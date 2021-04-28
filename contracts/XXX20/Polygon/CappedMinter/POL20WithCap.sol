@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.0;
 
-import "../SimpleMinter/ERC20Simple.sol";
+import "../SimpleMinter/POL20Simple.sol";
 
-contract ERC20WithCap is ERC20Simple {
+contract POL20WithCap is POL20Simple {
     uint256 private _cap;
 
     constructor(
         string memory name_,
         string memory symbol_,
         uint256 cap_
-    ) ERC20Simple(name_, symbol_) public {
+    ) POL20Simple(name_, symbol_) public {
         _cap = cap_;
     }
 
@@ -27,7 +28,8 @@ contract ERC20WithCap is ERC20Simple {
      * @param amount uint256
      */
     function mint(address recipient, uint256 amount) override public {
-        require(totalSupply() + amount <= _cap, "ERC20WithCap: cap overflow");
+        require(totalSupply() + amount <= _cap, "POL20WithCap: cap overflow");
         super.mint(recipient, amount);
     }
+
 }

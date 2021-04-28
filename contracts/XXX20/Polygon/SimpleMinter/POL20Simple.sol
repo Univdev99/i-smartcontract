@@ -2,9 +2,9 @@
 pragma solidity ^0.8.0;
 
 /**
- * @dev Interface of the BEP20 standard as defined in the EIP.
+ * @dev Interface of the POL20 standard as defined in the EIP.
  */
-interface IBEP20 {
+interface IPOL20 {
     /**
      * @dev Returns the amount of tokens in existence.
      */
@@ -76,11 +76,11 @@ interface IBEP20 {
 }
 
 /**
- * @dev Interface for the optional metadata functions from the BEP20 standard.
+ * @dev Interface for the optional metadata functions from the POL20 standard.
  *
  * _Available since v4.1._
  */
-interface IBEP20Metadata is IBEP20 {
+interface IPOL20Metadata is IPOL20 {
     /**
      * @dev Returns the name of the token.
      */
@@ -119,19 +119,19 @@ abstract contract Context {
 }
 
 /**
- * @dev Implementation of the {IBEP20} interface.
+ * @dev Implementation of the {IPOL20} interface.
  *
  * This implementation is agnostic to the way tokens are created. This means
  * that a supply mechanism has to be added in a derived contract using {_mint}.
- * For a generic mechanism see {BEP20PresetMinterPauser}.
+ * For a generic mechanism see {POL20PresetMinterPauser}.
  *
  * TIP: For a detailed writeup see our guide
- * https://forum.zeppelin.solutions/t/how-to-implement-BEP20-supply-mechanisms/226[How
+ * https://forum.zeppelin.solutions/t/how-to-implement-POL20-supply-mechanisms/226[How
  * to implement supply mechanisms].
  *
  * We have followed general OpenZeppelin guidelines: functions revert instead
  * of returning `false` on failure. This behavior is nonetheless conventional
- * and does not conflict with the expectations of BEP20 applications.
+ * and does not conflict with the expectations of POL20 applications.
  *
  * Additionally, an {Approval} event is emitted on calls to {transferFrom}.
  * This allows applications to reconstruct the allowance for all accounts just
@@ -140,9 +140,9 @@ abstract contract Context {
  *
  * Finally, the non-standard {decreaseAllowance} and {increaseAllowance}
  * functions have been added to mitigate the well-known issues around setting
- * allowances. See {IBEP20-approve}.
+ * allowances. See {IPOL20-approve}.
  */
-contract BEP20 is Context, IBEP20, IBEP20Metadata {
+contract POL20 is Context, IPOL20, IPOL20Metadata {
     mapping (address => uint256) private _balances;
 
     mapping (address => mapping (address => uint256)) private _allowances;
@@ -187,33 +187,33 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * be displayed to a user as `5,05` (`505 / 10 ** 2`).
      *
      * Tokens usually opt for a value of 18, imitating the relationship between
-     * Ether and Wei. This is the value {BEP20} uses, unless this function is
+     * Ether and Wei. This is the value {POL20} uses, unless this function is
      * overridden;
      *
      * NOTE: This information is only used for _display_ purposes: it in
      * no way affects any of the arithmetic of the contract, including
-     * {IBEP20-balanceOf} and {IBEP20-transfer}.
+     * {IPOL20-balanceOf} and {IPOL20-transfer}.
      */
     function decimals() public view virtual override returns (uint8) {
         return 18;
     }
 
     /**
-     * @dev See {IBEP20-totalSupply}.
+     * @dev See {IPOL20-totalSupply}.
      */
     function totalSupply() public view virtual override returns (uint256) {
         return _totalSupply;
     }
 
     /**
-     * @dev See {IBEP20-balanceOf}.
+     * @dev See {IPOL20-balanceOf}.
      */
     function balanceOf(address account) public view virtual override returns (uint256) {
         return _balances[account];
     }
 
     /**
-     * @dev See {IBEP20-transfer}.
+     * @dev See {IPOL20-transfer}.
      *
      * Requirements:
      *
@@ -226,14 +226,14 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
     }
 
     /**
-     * @dev See {IBEP20-allowance}.
+     * @dev See {IPOL20-allowance}.
      */
     function allowance(address owner, address spender) public view virtual override returns (uint256) {
         return _allowances[owner][spender];
     }
 
     /**
-     * @dev See {IBEP20-approve}.
+     * @dev See {IPOL20-approve}.
      *
      * Requirements:
      *
@@ -245,10 +245,10 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
     }
 
     /**
-     * @dev See {IBEP20-transferFrom}.
+     * @dev See {IPOL20-transferFrom}.
      *
      * Emits an {Approval} event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of {BEP20}.
+     * required by the EIP. See the note at the beginning of {POL20}.
      *
      * Requirements:
      *
@@ -261,7 +261,7 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
         _transfer(sender, recipient, amount);
 
         uint256 currentAllowance = _allowances[sender][_msgSender()];
-        require(currentAllowance >= amount, "BEP20: transfer amount exceeds allowance");
+        require(currentAllowance >= amount, "POL20: transfer amount exceeds allowance");
         _approve(sender, _msgSender(), currentAllowance - amount);
 
         return true;
@@ -271,7 +271,7 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * @dev Atomically increases the allowance granted to `spender` by the caller.
      *
      * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IBEP20-approve}.
+     * problems described in {IPOL20-approve}.
      *
      * Emits an {Approval} event indicating the updated allowance.
      *
@@ -288,7 +288,7 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * @dev Atomically decreases the allowance granted to `spender` by the caller.
      *
      * This is an alternative to {approve} that can be used as a mitigation for
-     * problems described in {IBEP20-approve}.
+     * problems described in {IPOL20-approve}.
      *
      * Emits an {Approval} event indicating the updated allowance.
      *
@@ -300,7 +300,7 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      */
     function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
         uint256 currentAllowance = _allowances[_msgSender()][spender];
-        require(currentAllowance >= subtractedValue, "BEP20: decreased allowance below zero");
+        require(currentAllowance >= subtractedValue, "POL20: decreased allowance below zero");
         _approve(_msgSender(), spender, currentAllowance - subtractedValue);
 
         return true;
@@ -321,13 +321,13 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * - `sender` must have a balance of at least `amount`.
      */
     function _transfer(address sender, address recipient, uint256 amount) internal virtual {
-        require(sender != address(0), "BEP20: transfer from the zero address");
-        require(recipient != address(0), "BEP20: transfer to the zero address");
+        require(sender != address(0), "POL20: transfer from the zero address");
+        require(recipient != address(0), "POL20: transfer to the zero address");
 
         _beforeTokenTransfer(sender, recipient, amount);
 
         uint256 senderBalance = _balances[sender];
-        require(senderBalance >= amount, "BEP20: transfer amount exceeds balance");
+        require(senderBalance >= amount, "POL20: transfer amount exceeds balance");
         _balances[sender] = senderBalance - amount;
         _balances[recipient] += amount;
 
@@ -344,7 +344,7 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * - `to` cannot be the zero address.
      */
     function _mint(address account, uint256 amount) internal virtual {
-        require(account != address(0), "BEP20: mint to the zero address");
+        require(account != address(0), "POL20: mint to the zero address");
 
         _beforeTokenTransfer(address(0), account, amount);
 
@@ -365,12 +365,12 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * - `account` must have at least `amount` tokens.
      */
     function _burn(address account, uint256 amount) internal virtual {
-        require(account != address(0), "BEP20: burn from the zero address");
+        require(account != address(0), "POL20: burn from the zero address");
 
         _beforeTokenTransfer(account, address(0), amount);
 
         uint256 accountBalance = _balances[account];
-        require(accountBalance >= amount, "BEP20: burn amount exceeds balance");
+        require(accountBalance >= amount, "POL20: burn amount exceeds balance");
         _balances[account] = accountBalance - amount;
         _totalSupply -= amount;
 
@@ -391,8 +391,8 @@ contract BEP20 is Context, IBEP20, IBEP20Metadata {
      * - `spender` cannot be the zero address.
      */
     function _approve(address owner, address spender, uint256 amount) internal virtual {
-        require(owner != address(0), "BEP20: approve from the zero address");
-        require(spender != address(0), "BEP20: approve to the zero address");
+        require(owner != address(0), "POL20: approve from the zero address");
+        require(spender != address(0), "POL20: approve to the zero address");
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
@@ -480,15 +480,15 @@ abstract contract Ownable is Context {
 }
 
 /**
- * @dev Interface of the BEP165 standard, as defined in the
+ * @dev Interface of the POL165 standard, as defined in the
  * https://eips.ethereum.org/EIPS/eip-165[EIP].
  *
  * Implementers can declare support of contract interfaces, which can then be
- * queried by others ({BEP165Checker}).
+ * queried by others ({POL165Checker}).
  *
- * For an implementation, see {BEP165}.
+ * For an implementation, see {POL165}.
  */
-interface IBEP165 {
+interface IPOL165 {
     /**
      * @dev Returns true if this contract implements the interface defined by
      * `interfaceId`. See the corresponding
@@ -501,16 +501,16 @@ interface IBEP165 {
 }
 
 /**
- * @dev Implementation of the {IBEP165} interface.
+ * @dev Implementation of the {IPOL165} interface.
  *
  * Contracts may inherit from this and call {_registerInterface} to declare
  * their support of an interface.
  */
-abstract contract BEP165 is IBEP165 {
+abstract contract POL165 is IPOL165 {
     /*
      * bytes4(keccak256('supportsInterface(bytes4)')) == 0x01ffc9a7
      */
-    bytes4 private constant _INTERFACE_ID_BEP165 = 0x01ffc9a7;
+    bytes4 private constant _INTERFACE_ID_POL165 = 0x01ffc9a7;
 
     /**
      * @dev Mapping of interface ids to whether or not it's supported.
@@ -519,12 +519,12 @@ abstract contract BEP165 is IBEP165 {
 
     constructor () internal {
         // Derived contracts need only register support for their own interfaces,
-        // we register support for BEP165 itself here
-        _registerInterface(_INTERFACE_ID_BEP165);
+        // we register support for POL165 itself here
+        _registerInterface(_INTERFACE_ID_POL165);
     }
 
     /**
-     * @dev See {IBEP165-supportsInterface}.
+     * @dev See {IPOL165-supportsInterface}.
      *
      * Time complexity O(1), guaranteed to always use less than 30 000 gas.
      */
@@ -534,17 +534,17 @@ abstract contract BEP165 is IBEP165 {
 
     /**
      * @dev Registers the contract as an implementer of the interface defined by
-     * `interfaceId`. Support of the actual BEP165 interface is automatic and
+     * `interfaceId`. Support of the actual POL165 interface is automatic and
      * registering its interface id is not required.
      *
-     * See {IBEP165-supportsInterface}.
+     * See {IPOL165-supportsInterface}.
      *
      * Requirements:
      *
-     * - `interfaceId` cannot be the BEP165 invalid interface (`0xffffffff`).
+     * - `interfaceId` cannot be the POL165 invalid interface (`0xffffffff`).
      */
     function _registerInterface(bytes4 interfaceId) internal virtual {
-        require(interfaceId != 0xffffffff, "BEP165: invalid interface id");
+        require(interfaceId != 0xffffffff, "POL165: invalid interface id");
         _supportedInterfaces[interfaceId] = true;
     }
 }
@@ -662,7 +662,7 @@ interface IAccessControl {
  * grant and revoke this role. Extra precautions should be taken to secure
  * accounts that have been granted it.
  */
-abstract contract AccessControl is Context, IAccessControl, BEP165 {
+abstract contract AccessControl is Context, IAccessControl, POL165 {
     struct RoleData {
         mapping (address => bool) members;
         bytes32 adminRole;
@@ -849,10 +849,10 @@ abstract contract AccessControl is Context, IAccessControl, BEP165 {
     }
 }
 
-contract BEP20Simple is BEP20, Ownable, AccessControl {
+contract POL20Simple is POL20, Ownable, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
 
-    constructor(string memory name_, string memory symbol_) public BEP20(name_, symbol_) {
+    constructor(string memory name_, string memory symbol_) public POL20(name_, symbol_) {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setupRole(OPERATOR_ROLE, msg.sender);
     }
@@ -861,7 +861,7 @@ contract BEP20Simple is BEP20, Ownable, AccessControl {
      * @dev Restricted to members of the admin role.
      */
     modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "BEP20Simple: not admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender), "POL20Simple: not admin");
         _;
     }
 
@@ -869,7 +869,7 @@ contract BEP20Simple is BEP20, Ownable, AccessControl {
      * @dev Restricted to members of the operator role.
      */
     modifier onlyOperator() {
-        require(hasRole(OPERATOR_ROLE, msg.sender), "BEP20Simple: not operator");
+        require(hasRole(OPERATOR_ROLE, msg.sender), "POL20Simple: not operator");
         _;
     }
 
