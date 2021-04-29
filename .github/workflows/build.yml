@@ -25,6 +25,7 @@ jobs:
 
     - name: npm build
       run: |
+        npm install -g truffle --quiet --no-progress
         npm install --quiet --no-progress
         truffle compile
         ls -lah
