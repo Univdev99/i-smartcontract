@@ -6,14 +6,11 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract ERC20PermitPausable is ERC20Permit, Ownable, ERC20Pausable, AccessControl {
+contract AC20PermitPausable is ERC20Permit, Ownable, ERC20Pausable, AccessControl {
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    constructor(
-        string memory name_,
-        string memory symbol_
-    ) public ERC20(name_, symbol_) ERC20Permit(name_) {
+    constructor(string memory name_, string memory symbol_) public ERC20Permit(name_) ERC20(name_, symbol_) {
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(OPERATOR_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
@@ -24,7 +21,7 @@ contract ERC20PermitPausable is ERC20Permit, Ownable, ERC20Pausable, AccessContr
      * @dev Restricted to members of the admin role.
      */
     modifier onlyAdmin() {
-        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "ERC20PermitPausable: not admin");
+        require(hasRole(DEFAULT_ADMIN_ROLE, _msgSender()), "AC20PermitPausable: not admin");
         _;
     }
 
@@ -32,7 +29,7 @@ contract ERC20PermitPausable is ERC20Permit, Ownable, ERC20Pausable, AccessContr
      * @dev Restricted to members of the operator role.
      */
     modifier onlyOperator() {
-        require(hasRole(OPERATOR_ROLE, _msgSender()), "ERC20PermitPausable: not operator");
+        require(hasRole(OPERATOR_ROLE, _msgSender()), "AC20PermitPausable: not operator");
         _;
     }
 
@@ -40,7 +37,7 @@ contract ERC20PermitPausable is ERC20Permit, Ownable, ERC20Pausable, AccessContr
      * @dev Restricted to members of the pauser role.
      */
     modifier onlyPauser() {
-        require(hasRole(PAUSER_ROLE, _msgSender()), "ERC20PermitPausable: not pauser");
+        require(hasRole(PAUSER_ROLE, _msgSender()), "AC20PermitPausable: not pauser");
         _;
     }
 
